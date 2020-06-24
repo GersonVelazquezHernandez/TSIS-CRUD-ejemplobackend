@@ -1,0 +1,253 @@
+<html>
+<body>
+<h2>Métodos CRUD</h2>
+<form action="#" id="contacto">
+<label for="matricula">Matricula: </label>
+<input type="text" id="matricula" placeholder="Ingrese matricula.."/>
+<label for="nombre">Nombre: </label>
+<input type="text" id="nombre" placeholder="Ingrese nombre.."/>
+<label for="carrera">Carrer: </label>
+<input type="text" id="carrera" placeholder="Ingrese carrera"/>
+<input type="submit" value="Registrar" id="registrar"/>
+<input type="submit" value="Actualizar" id="actualizar"/>
+</form>
+<label for="matric">Ingrese una matrícula:</label>
+<input type="text" id="matric" placeholder="Ingresa una matricula existente"/>
+<button id="eliminar">Eliminar</button>
+<button id="buscar">Buscar</button>
+<p>Nota: Para editar un alumno primero buscar el ID existente y despues hacer click en Actualizar</p>
+<script type="text/javascript">
+const formularioContactos = document.querySelector('#contacto');
+document.getElementById("actualizar").disabled=true;
+//eventListeners();
+document.getElementById("registrar").onclick = function() {eventListeners("registrar")};
+document.getElementById("eliminar").onclick = function() {eventListeners("eliminar")};
+document.getElementById("buscar").onclick = function() {eventListeners("buscar")};
+document.getElementById("actualizar").onclick = function() {eventListeners("actualizar")};
+
+
+
+function eventListeners(accion) {
+    //cuando  el formulario de editar o crear se ejecuta
+    if(accion === "registrar"){
+    console.log("Dentro de registrar");
+    formularioContactos.removeEventListener('submit', actualizar);
+    formularioContactos.addEventListener('submit', leerFormulario);
+    }
+    if(accion === "eliminar"){
+        console.log("Dentro de eliminar");
+        validarContacto("eliminar");
+     }
+    if(accion === "buscar"){
+    	console.log("Dentro de buscar");
+    	validarContacto("buscar");
+    }
+    if(accion === "actualizar"){
+        console.log("Dentro de registrar");
+        formularioContactos.removeEventListener('submit', leerFormulario);
+        formularioContactos.addEventListener('submit', actualizar);
+    }
+    
+    
+    
+
+}
+/****************INSERTAR DATOS******************/
+function leerFormulario(e) {
+    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+    const matricula = document.querySelector('#matricula').value,
+        nombre = document.querySelector('#nombre').value,
+        carrera = document.querySelector('#carrera').value;
+        if (matricula === '' || nombre === '' || carrera === '') {
+            console.log('Algun campo vacio');
+            alert("Campo Requeridos");
+        } else {
+            console.log("validacion correcta");
+            //console.log(matricula,nombre,carrera);
+            /*const infoContacto = new FormData(); //la mejor forma de formar documento AJAX {llave: valor}
+            infoContacto.append('matricula', matricula);
+            infoContacto.append('nombre', nombre);
+            infoContacto.append('carrera',carrera);
+            console.log(...infoContacto);*/
+            var text = {
+            	    "matricula":parseInt(matricula),
+            	    "nombre":nombre,
+            	    "carrera":carrera
+
+            	}
+            //infoContacto.append('accion', accion);
+            //if(accion === 'crear'){
+            	insertarBD(text);
+            //}
+            //console.log(text);
+        }
+}
+function insertarBD(datos){
+	//llamado a ajax
+    const xhr = new XMLHttpRequest();
+	console.log(datos)
+    //crear el objeto
+    //abrir la conexion
+    xhr.onload = function() {
+        if (this.status === 201) {
+            //console.log(xhr.responseText);
+            //const respuesta = JSON.parse(xhr.responseText);
+            //console.log(respuesta);
+            document.querySelector('#matricula').value = '';
+            document.querySelector('#nombre').value = '';
+            document.querySelector('#carrera').value = '';
+            alert('Se agregó correctamente')
+        }
+        else{
+        	console.log(this.status);
+        }
+    }
+    xhr.open('POST', 'http://localhost:8080/alumnos');
+
+ // set `Content-Type` header
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // send rquest with JSON payload
+    xhr.send(JSON.stringify(datos));
+}
+
+
+/***********VALIDAR CONTACTO************/
+
+ function validarContacto(accion){
+	const id =  document.querySelector('#matric').value;
+	if (id === '') {
+        console.log('Algun campo vacio');
+        alert("Campo Requerido");
+    } else {
+        console.log("validacion correcta");
+        if(accion === "eliminar"){
+	        const respuesta = confirm('¿Estas Segur@ ?'); //confirm ya lo trae integrado el navegador
+	        if (respuesta) {
+	        	eliminarBD(id);
+	        }
+        }else{
+        	buscarBD(id);
+        }
+    }
+}
+ 
+ /***********ELIMINAR CONTACTO************/
+
+function eliminarBD(id){
+	const xhr = new XMLHttpRequest();
+
+    xhr.onload = function() {
+        if (this.status === 204) {
+            //console.log(xhr.responseText);
+            //const resultado = JSON.parse(xhr.responseText);
+            //console.log(resultado);
+            alert("Se eliminó correctamente el id: "+id);
+        }
+        else{
+        	console.log(this.status);
+        	alert("Error 404 el id no fue encontrado");
+        }
+    }
+        xhr.open('DELETE', 'http://localhost:8080/alumnos/'+id);
+
+        // set `Content-Type` header
+           //xhr.setRequestHeader('Content-Type', 'application/json');
+
+           // send rquest with JSON payload
+           xhr.send();
+}
+
+/***********BUSCAR CONTACTO************/
+function buscarBD(id){
+	const xhr = new XMLHttpRequest();
+
+    xhr.onload = function() {
+        if (this.status === 200) {
+            console.log(xhr.responseText);
+            const resultado = JSON.parse(xhr.responseText);
+            console.log(resultado); 
+            document.querySelector('#matricula').value = String(resultado.matricula);
+            document.querySelector('#nombre').value = resultado.nombre;
+            document.querySelector('#carrera').value = resultado.carrera;
+            document.getElementById("matricula").disabled=true;
+            document.getElementById("registrar").disabled=true;
+            document.getElementById("actualizar").disabled=false;
+
+        }
+        else{
+        	console.log(this.status);
+        }
+    }
+        xhr.open('GET', 'http://localhost:8080/alumnos/'+id);
+
+        // set `Content-Type` header
+           //xhr.setRequestHeader('Content-Type', 'application/json');
+
+           // send rquest with JSON payload
+           xhr.send();
+}
+/***********ACTUALIZAR************/
+function actualizar(e) {
+    e.preventDefault(); // el action ya no se ejecuta de php y cae en el default
+    const matricula = document.querySelector('#matricula').value,
+        nombre = document.querySelector('#nombre').value,
+        carrera = document.querySelector('#carrera').value;
+        if (matricula === '' || nombre === '' || carrera === '') {
+            console.log('Algun campo vacio');
+            alert("Campo Requeridos");
+        } else {
+            console.log("validacion correcta");
+            //console.log(matricula,nombre,carrera);
+            /*const infoContacto = new FormData(); //la mejor forma de formar documento AJAX {llave: valor}
+            infoContacto.append('matricula', matricula);
+            infoContacto.append('nombre', nombre);
+            infoContacto.append('carrera',carrera);
+            console.log(...infoContacto);*/
+            var text = {
+            	    "matricula":parseInt(matricula),
+            	    "nombre":nombre,
+            	    "carrera":carrera
+
+            	}
+            //infoContacto.append('accion', accion);
+            //if(accion === 'crear'){
+            	actualizarBD(text);
+            //}
+            //console.log(text);
+        }
+}
+function actualizarBD(datos){
+	//llamado a ajax
+    const xhr = new XMLHttpRequest();
+	console.log(datos);
+    //crear el objeto
+    //abrir la conexion
+    xhr.onload = function() {
+        if (this.status === 200) {
+            console.log(xhr.responseText);
+            const respuesta = JSON.parse(xhr.responseText);
+            console.log(respuesta);
+            alert("Se actualizo correctamente el alumno")
+            document.querySelector('#matricula').value = '';
+            document.querySelector('#nombre').value = '';
+            document.querySelector('#carrera').value = '';
+            document.getElementById("registrar").disabled=false;
+            document.getElementById("matricula").disabled=false;
+            document.getElementById("actualizar").disabled=true;
+        }
+        else{
+        	console.log(this.status);
+        }
+    }
+    xhr.open('PUT', 'http://localhost:8080/alumnos/'+datos.matricula);
+
+ // set `Content-Type` header
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    // send rquest with JSON payload
+    xhr.send(JSON.stringify(datos));
+}
+</script>
+</body>
+</html>
