@@ -72,7 +72,7 @@ public class AlumnoController {
 		if(updtAlumno != null) {
 			return ResponseEntity.status(HttpStatus.OK).body(updtAlumno);//.body(alumno);
 		}else{
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
 		
 	}
@@ -83,7 +83,7 @@ public class AlumnoController {
 		log.info("Eliminando Alumno");
 		Alumno deleteAlumno = alumnoService.delete(matricula);
 		if(deleteAlumno != null) {
-			return ResponseEntity.status(HttpStatus.OK).body("Se ha eliminado el alumno: "+deleteAlumno.getNombre());//.body(alumno);
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Se ha eliminado el alumno: "+deleteAlumno.getNombre());//.body(alumno);
 		}else{
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 		}

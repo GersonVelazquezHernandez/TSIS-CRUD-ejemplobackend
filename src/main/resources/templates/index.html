@@ -239,6 +239,7 @@ function actualizarBD(datos){
         }
         else{
         	console.log(this.status);
+        	alert("No se puede actualizar");
         }
     }
     xhr.open('PUT', 'http://localhost:8080/alumnos/'+datos.matricula);
