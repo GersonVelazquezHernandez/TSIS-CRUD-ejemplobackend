@@ -178,6 +178,7 @@ function buscarBD(id){
         }
         else{
         	console.log(this.status);
+        	alert("El Id no fue encontrado");
         }
     }
         xhr.open('GET', 'http://localhost:8080/alumnos/'+id);

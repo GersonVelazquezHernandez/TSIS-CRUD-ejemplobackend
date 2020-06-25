@@ -31,15 +31,6 @@ public class AlumnoRepository {
 			return new ArrayList<>(alumnoRepository.values());
 		}
 		
-		//Update
-		public void actualizar (Integer matricula, Alumno alumnoUpdate) {
-			alumnoRepository.replace(matricula, alumnoUpdate);
-		}
-		//delete
-		public void eliminar(Integer matricula) {
-			alumnoRepository.remove(matricula);
-
-		}
 		public Alumno updateAlumno(Integer matricula, Alumno alumnoUpdate) {
 			alumnoRepository.replace(matricula, alumnoUpdate);
 			return alumnoUpdate;
