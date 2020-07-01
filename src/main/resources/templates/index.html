@@ -101,6 +101,7 @@ function insertarBD(datos){
         }
         else{
         	console.log(this.status);
+        	alert("El alumno no pudo ser registrado");
         }
     }
     xhr.open('POST', 'http://localhost:8080/alumnos');

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MainController {
 	
-	
+	@ApiOperation(value="Recupera el index",notes="Obtiene la URL raíz de la aplicación.")//Documentacion de api
 	@GetMapping("/") //Mapea la raiz del programa
 	public String index() {
 		log.info("*********EN INDEX**********");
