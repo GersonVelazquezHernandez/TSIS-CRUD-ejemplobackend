@@ -11,10 +11,7 @@ import mx.uam.tsis.ejemplobackend.datos.AlumnoRepository;
 import mx.uam.tsis.ejemplobackend.negocio.modelo.Alumno;
 /*
  * Clase que contiene la lógica de negocio para el manejo de alumnos
- * 
- * @author Humberto Cervantez
- * 
- * */
+ */
 @Slf4j
 @Service
 public class AlumnoService {
@@ -33,8 +30,10 @@ public class AlumnoService {
 		Optional <Alumno> alumnoOpt = alumnoRepository.findById(nuevoAlumno.getMatricula());
 		log.info(alumnoOpt.toString());
 		if(!alumnoOpt.isPresent()) {
-			alumnoRepository.save(nuevoAlumno);
-			return alumnoRepository.save(nuevoAlumno);
+			log.info("Voy a regresar a alumno "+nuevoAlumno);
+			Alumno returnAlumno = alumnoRepository.save(nuevoAlumno);
+				log.info("Voy a regresar a alumno "+returnAlumno);
+			return returnAlumno;
 		}else {
 			return null;
 		}
@@ -52,7 +51,7 @@ public class AlumnoService {
 	@ApiOperation(value="Buscar alumno",notes="Verifica si la matricula está registrada y devuelve al alumno, de lo contrario devuelve null.")//Documentacion de api
 	public Optional<Alumno> retrieveByID(Integer matricula) {
 		// TODO Auto-generated method stub
-		Optional <Alumno> alumnoOpt = alumnoRepository.findById(matricula);
+		Optional<Alumno> alumnoOpt = alumnoRepository.findById(matricula);
 		
 		if(alumnoOpt.isPresent()) {
 			return alumnoOpt;
@@ -61,14 +60,22 @@ public class AlumnoService {
 		}
 	}
 	@ApiOperation(value="Sobreescribe al alumno",notes="Verifica si la matricula está registrada y sobreescribe los datos del alumno.")//Documentacion de api
-	public Alumno update(Integer matricula, Alumno alumnoUpdate) {
+	public boolean update(Integer matricula, Alumno alumnoUpdate) {
 		// TODO Auto-generated method stub
 		Optional <Alumno> alumnoOpt = alumnoRepository.findById(matricula);
 		log.info(alumnoOpt.toString());
 		if(alumnoOpt.isPresent()) {
-			return alumnoRepository.save(alumnoUpdate);
+			Alumno alumno = alumnoOpt.get(); // Este es el que está en la bd
+
+			alumno.setCarrera(alumnoUpdate.getCarrera());
+			alumno.setNombre(alumnoUpdate.getNombre());
+
+			log.info("Persistiendo los cambios "+alumno.getCarrera());
+
+			alumnoRepository.save(alumno); // Persisto los cambios
+			return true;
 		}else {
-			return null;
+			return false;
 		}
 	}
 	@ApiOperation(value="Eliminar alumno",notes="Verifica si la matrícula está registrada y elimina al alumno, si no devuelve null.")//Documentacion de api

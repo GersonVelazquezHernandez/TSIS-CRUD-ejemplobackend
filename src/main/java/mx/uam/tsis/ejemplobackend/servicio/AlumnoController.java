@@ -71,9 +71,9 @@ public class AlumnoController {
 	@PutMapping(path="/alumnos/{matricula}")
 	public ResponseEntity<?> update(@PathVariable("matricula") Integer matricula, @RequestBody @Valid Alumno alumnoUpdate) {
 		log.info("Actualizando al alumno: "+matricula);
-		Alumno updtAlumno = alumnoService.update(matricula,alumnoUpdate);
-		if(updtAlumno != null) {
-			return ResponseEntity.status(HttpStatus.OK).body(updtAlumno);//.body(alumno);
+		boolean updtAlumno = alumnoService.update(matricula,alumnoUpdate);
+		if(updtAlumno != false) {
+			return ResponseEntity.status(HttpStatus.OK).build();//.body(alumno);
 		}else{
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}

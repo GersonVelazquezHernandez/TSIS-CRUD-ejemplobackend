@@ -9,6 +9,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /*
@@ -21,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Data //para genera getters y setters de alumno
 @Entity//Indica que hay que persistir en BD
+@EqualsAndHashCode
 public class Alumno {
 	@NotNull
 	@ApiModelProperty(notes="Matricula del alumno", required=true)
